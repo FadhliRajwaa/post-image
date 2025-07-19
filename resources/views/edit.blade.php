@@ -32,8 +32,8 @@
                             <label for="narasi" class="block text-sm font-medium text-gray-700">Narasi</label>
                             <textarea name="narasi" id="narasi" rows="5" 
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                maxlength="200" required>{{ old('narasi', $poster->narasi) }}</textarea>
-                            <p class="text-xs text-gray-500 mt-1">Maksimal 200 karakter</p>
+                                maxlength="1000" required>{{ old('narasi', $poster->narasi) }}</textarea>
+                            <p class="text-xs text-gray-500 mt-1">Maksimal 1000 karakter</p>
                             @error('narasi')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
@@ -128,8 +128,8 @@
             // Update narasi saat input berubah
             narasiInput.addEventListener('input', function() {
                 let text = this.value || '{{ $poster->narasi }}';
-                if (text.length > 100) {
-                    text = text.substring(0, 100) + '...';
+                if (text.length > 200) { // Meningkatkan preview dari 100 menjadi 200
+                    text = text.substring(0, 200) + '...';
                 }
                 previewNarasi.textContent = text;
             });

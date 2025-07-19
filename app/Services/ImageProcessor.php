@@ -121,8 +121,8 @@ class ImageProcessor
             }
             
             // Ukuran font yang lebih besar
-            $fontSizeJudul = 90; // Ukuran font untuk judul (dikurangi dari 1000)
-            $fontSizeNarasi = 40; // Ukuran font untuk narasi (dikurangi dari 800)
+            $fontSizeJudul = 75; // Ukuran font untuk judul (dikurangi dari 1000)
+            $fontSizeNarasi = 45; // Ukuran font untuk narasi (dikurangi dari 800)
             
             // Teks yang akan ditampilkan
             $judul = $poster->judul;
@@ -158,11 +158,34 @@ class ImageProcessor
                     }
                 }
                 
-                // Tambahkan narasi dengan Calibri Bold
+                // Tambahkan narasi dengan Calibri Bold dengan word wrap
                 if (file_exists($calibriBoldPath)) {
-                    $result = imagettftext($canvas, $fontSizeNarasi, 0, $narasiX, $narasiY, $white, $calibriBoldPath, $narasi);
-                    if ($result !== false) {
-                        $narasiSuccess = true;
+                    // Gunakan wordWrapText untuk membagi teks menjadi baris-baris
+                    $lines = $this->wordWrapText($narasi, $fontSizeNarasi, $calibriBoldPath);
+                    
+                    $lineHeight = $fontSizeNarasi * 1.1; // Mengurangi tinggi baris dari 1.2x menjadi 1.1x
+                    $startY = $narasiY - (count($lines) - 1) * $lineHeight; // Mulai dari atas agar tetap berakhir di posisi $narasiY
+                    
+                    $narasiSuccess = true;
+                    
+                    foreach ($lines as $index => $line) {
+                        // Hitung posisi X untuk setiap baris agar tetap di tengah
+                        $bbox = imagettfbbox($fontSizeNarasi, 0, $calibriBoldPath, $line);
+                        $lineWidth = $bbox[2] - $bbox[0];
+                        $lineX = (2000 - $lineWidth) / 2;
+                        
+                        $lineY = $startY + ($index * $lineHeight);
+                        
+                        $result = imagettftext($canvas, $fontSizeNarasi, 0, $lineX, $lineY, $white, $calibriBoldPath, $line);
+                        
+                        if ($result === false) {
+                            $narasiSuccess = false;
+                            Log::error('Gagal menggunakan font TTF untuk narasi baris ' . ($index + 1));
+                            break;
+                        }
+                    }
+                    
+                    if ($narasiSuccess) {
                         Log::info('Berhasil menggunakan font TTF untuk narasi: ' . $calibriBoldPath);
                     } else {
                         Log::error('Gagal menggunakan font TTF untuk narasi meskipun file ada');
@@ -202,12 +225,23 @@ class ImageProcessor
                     
                     // Tambahkan narasi jika belum berhasil
                     if (!$narasiSuccess && file_exists($calibriBoldPath)) {
-                        $img->text($narasi, 1000, $narasiY, function ($font) use ($calibriBoldPath, $fontSizeNarasi) {
-                            $font->filename($calibriBoldPath);
-                            $font->size($fontSizeNarasi);
-                            $font->color('#ffffff');
-                            $font->align('center');
-                        });
+                        // Menggunakan wordWrapText untuk teks narasi
+                        $lines = $this->wordWrapText($narasi, $fontSizeNarasi, $calibriBoldPath);
+                        
+                        $lineHeight = $fontSizeNarasi * 1.1; // Mengurangi tinggi baris dari 1.2x menjadi 1.1x
+                        $startY = $narasiY - (count($lines) - 1) * $lineHeight; // Mulai dari atas agar tetap berakhir di posisi $narasiY
+                        
+                        foreach ($lines as $index => $line) {
+                            $lineY = $startY + ($index * $lineHeight);
+                            
+                            $img->text($line, 1000, $lineY, function ($font) use ($calibriBoldPath, $fontSizeNarasi) {
+                                $font->filename($calibriBoldPath);
+                                $font->size($fontSizeNarasi);
+                                $font->color('#ffffff');
+                                $font->align('center');
+                            });
+                        }
+                        
                         $narasiSuccess = true;
                         Log::info('Berhasil menggunakan Intervention\Image untuk narasi');
                     }
@@ -312,20 +346,37 @@ class ImageProcessor
         $scale = ($type === 'judul') ? 10 : 8; // Mengurangi skala dari 20/16 menjadi 10/8
         $fontSize = 5; // Ukuran font maksimal
         
+        // Untuk teks narasi yang panjang, pisahkan menjadi beberapa baris
+        $lines = [];
+        if ($type === 'narasi') {
+            // Bagi teks menjadi baris-baris dengan panjang maksimal 40 karakter
+            $lines = str_split($text, 40);
+        } else {
+            // Untuk judul, gunakan teks asli
+            $lines = [$text];
+        }
+        
+        $lineHeight = 40; // Jarak antar baris
+        $totalHeight = count($lines) * $lineHeight;
+        
         // Buat canvas khusus untuk teks dengan ukuran lebih besar
-        $textImage = imagecreatetruecolor(2000, 800); // Meningkatkan tinggi dari 300 ke 800
+        $textImage = imagecreatetruecolor(2000, $totalHeight);
         imagefill($textImage, 0, 0, imagecolorallocatealpha($textImage, 0, 0, 0, 127));
         imagealphablending($textImage, true);
         imagesavealpha($textImage, true);
         
         // Gambar teks dengan font default
-        $x = 0;
-        if ($type === 'judul') {
-            // Gunakan font default yang lebih besar dan tebal
-            imagestring($textImage, 5, 0, 0, strtoupper($text), $textColor); // Uppercase untuk judul
-        } else {
-            // Font normal untuk narasi
-            imagestring($textImage, 5, 0, 0, $text, $textColor);
+        foreach ($lines as $index => $line) {
+            $x = 0; // Mulai dari kiri
+            $currentY = $index * $lineHeight;
+            
+            if ($type === 'judul') {
+                // Gunakan font default yang lebih besar dan tebal
+                imagestring($textImage, $fontSize, $x, $currentY, strtoupper($line), $textColor); // Uppercase untuk judul
+            } else {
+                // Font normal untuk narasi
+                imagestring($textImage, $fontSize, $x, $currentY, $line, $textColor);
+            }
         }
         
         // Buat gambar baru dengan ukuran lebih besar
@@ -370,12 +421,60 @@ class ImageProcessor
      * @param int $length
      * @return string
      */
-    private function limitText(string $text, int $length = 120): string
+    private function limitText(string $text, int $length = 1000): string
     {
         if (strlen($text) <= $length) {
             return $text;
         }
         
         return substr($text, 0, $length) . '...';
+    }
+    
+    /**
+     * Membuat teks multi-line dengan word wrap
+     *
+     * @param string $text
+     * @param int $font_size
+     * @param string $font_path
+     * @param int $max_width
+     * @return array
+     */
+    private function wordWrapText(string $text, int $font_size, string $font_path, int $max_width = 1600): array
+    {
+        // Split teks menjadi kata-kata
+        $words = explode(' ', $text);
+        $lines = [];
+        $current_line = '';
+        
+        foreach ($words as $word) {
+            // Coba tambahkan kata ke baris saat ini
+            $test_line = $current_line . ' ' . $word;
+            $test_line = ltrim($test_line); // Hapus spasi di awal
+            
+            // Hitung lebar teks dengan font TTF
+            $bbox = imagettfbbox($font_size, 0, $font_path, $test_line);
+            $text_width = $bbox[2] - $bbox[0];
+            
+            // Jika melebihi lebar maksimum, mulai baris baru
+            if ($text_width > $max_width && $current_line !== '') {
+                $lines[] = $current_line;
+                $current_line = $word;
+            } else {
+                $current_line = $test_line;
+            }
+        }
+        
+        // Tambahkan baris terakhir
+        if ($current_line !== '') {
+            $lines[] = $current_line;
+        }
+        
+        // Batasi jumlah baris maksimum untuk menghindari terlalu banyak baris
+        if (count($lines) > 15) {
+            $lines = array_slice($lines, 0, 15);
+            $lines[14] .= '...';
+        }
+        
+        return $lines;
     }
 } 

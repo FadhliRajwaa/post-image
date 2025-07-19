@@ -44,10 +44,10 @@
                                 <label for="narasi" class="block text-sm font-medium text-gray-700">Narasi</label>
                                 <textarea name="narasi" id="narasi" rows="4" 
                                     class="mt-1.5 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition duration-150"
-                                    maxlength="200" required placeholder="Masukkan narasi poster">{{ old('narasi') }}</textarea>
+                                    maxlength="1000" required placeholder="Masukkan narasi poster">{{ old('narasi') }}</textarea>
                                 <div class="flex justify-between items-center mt-1.5">
                                     <p class="text-xs text-gray-500">Caption untuk poster</p>
-                                    <p class="text-xs text-gray-500 font-medium">Maks. 200 karakter</p>
+                                    <p class="text-xs text-gray-500 font-medium">Maks. 1000 karakter</p>
                                 </div>
                                 @error('narasi')
                                     <p class="text-red-500 text-xs mt-1.5">{{ $message }}</p>

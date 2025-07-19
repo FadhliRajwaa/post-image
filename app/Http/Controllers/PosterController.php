@@ -172,7 +172,7 @@ class PosterController extends Controller
             
             // Posisi teks di tengah bawah
             $judul = $poster->judul;
-            $narasi = $poster->narasi;
+            $narasi = $poster->narasi; // Gunakan narasi lengkap tanpa limit
             
             // Hitung lebar teks untuk pemusatan
             $bbox = imagettfbbox($fontSizeJudul, 0, $arialBlackPath, $judul);
@@ -205,9 +205,32 @@ class PosterController extends Controller
                 
                 // Tambahkan narasi dengan Calibri Bold
                 if (file_exists($calibriBoldPath)) {
-                    $result = imagettftext($image, $fontSizeNarasi, 0, $narasiX, $narasiY, $textColor, $calibriBoldPath, $narasi);
-                    if ($result !== false) {
-                        $narasiSuccess = true;
+                    // Gunakan wordWrapText untuk membagi teks menjadi baris-baris
+                    $lines = $this->wordWrapText($narasi, $fontSizeNarasi, $calibriBoldPath);
+                    
+                    $lineHeight = $fontSizeNarasi * 1.1; // Mengurangi tinggi baris dari 1.2x menjadi 1.1x
+                    $startY = $narasiY - (count($lines) - 1) * $lineHeight; // Mulai dari atas agar tetap berakhir di posisi $narasiY
+                    
+                    $narasiSuccess = true;
+                    
+                    foreach ($lines as $index => $line) {
+                        // Hitung posisi X untuk setiap baris agar tetap di tengah
+                        $bbox = imagettfbbox($fontSizeNarasi, 0, $calibriBoldPath, $line);
+                        $lineWidth = $bbox[2] - $bbox[0];
+                        $lineX = (2000 - $lineWidth) / 2;
+                        
+                        $lineY = $startY + ($index * $lineHeight);
+                        
+                        $result = imagettftext($image, $fontSizeNarasi, 0, $lineX, $lineY, $textColor, $calibriBoldPath, $line);
+                        
+                        if ($result === false) {
+                            $narasiSuccess = false;
+                            Log::error('Gagal menggunakan font TTF untuk narasi baris ' . ($index + 1));
+                            break;
+                        }
+                    }
+                    
+                    if ($narasiSuccess) {
                         Log::info('Berhasil menggunakan font TTF untuk narasi: ' . $calibriBoldPath);
                     } else {
                         Log::error('Gagal menggunakan font TTF untuk narasi meskipun file ada');
@@ -517,7 +540,7 @@ class PosterController extends Controller
             
             // Posisi teks di tengah bawah
             $judul = $poster->judul;
-            $narasi = substr($poster->narasi, 0, 120) . (strlen($poster->narasi) > 120 ? '...' : '');
+            $narasi = substr($poster->narasi, 0, 1000) . (strlen($poster->narasi) > 1000 ? '...' : '');
             
             // Hitung lebar teks untuk pemusatan
             $bbox = imagettfbbox($fontSizeJudul, 0, $arialBlackPath, $judul);
@@ -550,9 +573,32 @@ class PosterController extends Controller
                 
                 // Tambahkan narasi dengan Calibri Bold
                 if (file_exists($calibriBoldPath)) {
-                    $result = imagettftext($canvas, $fontSizeNarasi, 0, $narasiX, $narasiY, $white, $calibriBoldPath, $narasi);
-                    if ($result !== false) {
-                        $narasiSuccess = true;
+                    // Gunakan wordWrapText untuk membagi teks menjadi baris-baris
+                    $lines = $this->wordWrapText($narasi, $fontSizeNarasi, $calibriBoldPath);
+                    
+                    $lineHeight = $fontSizeNarasi * 1.1; // Mengurangi tinggi baris dari 1.2x menjadi 1.1x
+                    $startY = $narasiY - (count($lines) - 1) * $lineHeight; // Mulai dari atas agar tetap berakhir di posisi $narasiY
+                    
+                    $narasiSuccess = true;
+                    
+                    foreach ($lines as $index => $line) {
+                        // Hitung posisi X untuk setiap baris agar tetap di tengah
+                        $bbox = imagettfbbox($fontSizeNarasi, 0, $calibriBoldPath, $line);
+                        $lineWidth = $bbox[2] - $bbox[0];
+                        $lineX = (2000 - $lineWidth) / 2;
+                        
+                        $lineY = $startY + ($index * $lineHeight);
+                        
+                        $result = imagettftext($canvas, $fontSizeNarasi, 0, $lineX, $lineY, $white, $calibriBoldPath, $line);
+                        
+                        if ($result === false) {
+                            $narasiSuccess = false;
+                            Log::error('Gagal menggunakan font TTF untuk narasi download baris ' . ($index + 1));
+                            break;
+                        }
+                    }
+                    
+                    if ($narasiSuccess) {
                         Log::info('Berhasil menggunakan font TTF untuk narasi download: ' . $calibriBoldPath);
                     } else {
                         Log::error('Gagal menggunakan font TTF untuk narasi download meskipun file ada');
@@ -666,16 +712,8 @@ class PosterController extends Controller
             imagestring($canvas, $fontSize, $textX, $textY, $judul, $white);
             
             // Tambahkan teks narasi
-            $narasi = substr($poster->narasi, 0, 120) . (strlen($poster->narasi) > 120 ? '...' : '');
-            $fontSize = 5; // Font size untuk narasi - Gunakan nilai maksimal
-            
-            // Hitung lebar teks untuk narasi
-            $textWidth = imagefontwidth($fontSize) * strlen($narasi);
-            $textX = (2000 - $textWidth) / 2;
-            $textY = 1800;
-            
-            // Tambahkan teks narasi utama tanpa bayangan
-            imagestring($canvas, $fontSize, $textX, $textY, $narasi, $white);
+            $narasi = substr($poster->narasi, 0, 1000) . (strlen($poster->narasi) > 1000 ? '...' : '');
+            $this->addTextWithShadow($canvas, $narasi, 1000, 1800, $white, null, 5);
             
             // Generate nama file
             $filename = 'posters/' . time() . '_download_default_' . uniqid() . '.jpg';
@@ -724,7 +762,7 @@ class PosterController extends Controller
     {
         $validated = $request->validate([
             'judul' => 'required|max:255',
-            'narasi' => 'required',
+            'narasi' => 'required|max:2000',
             'gambar' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'frame' => 'required|image|mimes:png|max:2048',
         ]);
@@ -786,7 +824,7 @@ class PosterController extends Controller
     {
         $request->validate([
             'judul' => 'required|max:50',
-            'narasi' => 'required|max:200',
+            'narasi' => 'required|max:2000',
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'frame' => 'nullable|image|mimes:png|max:2048',
         ]);
@@ -921,5 +959,53 @@ class PosterController extends Controller
             Log::error('Error saat regenerasi poster: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Terjadi kesalahan saat meregenerasi poster.');
         }
+    }
+
+    /**
+     * Membuat teks multi-line dengan word wrap
+     *
+     * @param string $text
+     * @param int $font_size
+     * @param string $font_path
+     * @param int $max_width
+     * @return array
+     */
+    private function wordWrapText(string $text, int $font_size, string $font_path, int $max_width = 1600): array
+    {
+        // Split teks menjadi kata-kata
+        $words = explode(' ', $text);
+        $lines = [];
+        $current_line = '';
+        
+        foreach ($words as $word) {
+            // Coba tambahkan kata ke baris saat ini
+            $test_line = $current_line . ' ' . $word;
+            $test_line = ltrim($test_line); // Hapus spasi di awal
+            
+            // Hitung lebar teks dengan font TTF
+            $bbox = imagettfbbox($font_size, 0, $font_path, $test_line);
+            $text_width = $bbox[2] - $bbox[0];
+            
+            // Jika melebihi lebar maksimum, mulai baris baru
+            if ($text_width > $max_width && $current_line !== '') {
+                $lines[] = $current_line;
+                $current_line = $word;
+            } else {
+                $current_line = $test_line;
+            }
+        }
+        
+        // Tambahkan baris terakhir
+        if ($current_line !== '') {
+            $lines[] = $current_line;
+        }
+        
+        // Batasi jumlah baris maksimum untuk menghindari terlalu banyak baris
+        if (count($lines) > 15) {
+            $lines = array_slice($lines, 0, 15);
+            $lines[14] .= '...';
+        }
+        
+        return $lines;
     }
 }
