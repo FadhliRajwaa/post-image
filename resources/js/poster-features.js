@@ -146,6 +146,26 @@ function initImageControls() {
     const posYDownButton = document.getElementById('pos-y-down');
     const resetPositionButton = document.getElementById('reset-position');
     
+    // Elemen kontrol posisi Y judul dan narasi
+    const judulYRangeInput = document.getElementById('judul_y');
+    const narasiYRangeInput = document.getElementById('narasi_y');
+    const judulYValueElement = document.getElementById('judul-y-value');
+    const narasiYValueElement = document.getElementById('narasi-y-value');
+    const judulYUpButton = document.getElementById('judul-y-up');
+    const judulYDownButton = document.getElementById('judul-y-down');
+    const narasiYUpButton = document.getElementById('narasi-y-up');
+    const narasiYDownButton = document.getElementById('narasi-y-down');
+    
+    // Elemen preview containers
+    const judulContainer = document.getElementById('preview-judul-container');
+    const narasiContainer = document.getElementById('preview-narasi-container');
+    
+    // Elemen jarak judul & narasi
+    const gapRangeInput = document.getElementById('judul_narasi_gap');
+    const gapValueElement = document.getElementById('gap-value');
+    const gapDecreaseButton = document.getElementById('gap-decrease');
+    const gapIncreaseButton = document.getElementById('gap-increase');
+    
     // Juga perbarui saat gambar atau frame berubah
     const gambarInput = document.getElementById('gambar');
     const frameInput = document.getElementById('frame');
@@ -215,15 +235,121 @@ function initImageControls() {
         scaleValueElement.textContent = scale.toFixed(2);
         posXValueElement.textContent = posX;
         posYValueElement.textContent = posY;
+        
+        // Perbarui input hidden untuk form submission
+        const scaleHiddenInput = document.querySelector('input[name="scale_gambar"]');
+        const posXHiddenInput = document.querySelector('input[name="pos_x"]');
+        const posYHiddenInput = document.querySelector('input[name="pos_y"]');
+        
+        if (scaleHiddenInput) scaleHiddenInput.value = scale;
+        if (posXHiddenInput) posXHiddenInput.value = posX;
+        if (posYHiddenInput) posYHiddenInput.value = posY;
+    }
+    
+    // Fungsi untuk menginisialisasi posisi awal teks
+    function initializePositions() {
+        // Inisialisasi posisi Y judul
+        if (judulContainer && judulYRangeInput) {
+            const judulY = parseInt(judulYRangeInput.value);
+            const percentage = (judulY - 1000) / 800; // 0-1
+            const topPosition = 40 + percentage * 40; // 40%-80%
+            judulContainer.style.top = topPosition + '%';
+        }
+        
+        // Inisialisasi posisi Y narasi
+        if (narasiContainer && narasiYRangeInput) {
+            const narasiY = parseInt(narasiYRangeInput.value);
+            const percentage = (narasiY - 1400) / 550; // 0-1
+            const topPosition = 50 + percentage * 40; // 50%-90%
+            narasiContainer.style.top = topPosition + '%';
+        }
+    }
+    
+    // Fungsi untuk memperbarui tampilan posisi Y judul
+    function updateJudulYPosition() {
+        if (!judulYRangeInput || !judulYValueElement || !judulContainer) return;
+        
+        const judulY = parseInt(judulYRangeInput.value);
+        judulYValueElement.textContent = judulY;
+        
+        // Konversi posisi Y (1000-1800) ke posisi relatif dalam preview (40%-80%)
+        const percentage = (judulY - 1000) / 800; // 0-1
+        const topPosition = 40 + percentage * 40; // 40%-80%
+        judulContainer.style.top = topPosition + '%';
+        
+        // Perbarui input hidden untuk form submission
+        const judulYHiddenInput = document.querySelector('input[name="judul_y"]');
+        if (judulYHiddenInput) judulYHiddenInput.value = judulY;
+    }
+    
+    // Fungsi untuk memperbarui tampilan posisi Y narasi
+    function updateNarasiYPosition() {
+        if (!narasiYRangeInput || !narasiYValueElement || !narasiContainer) return;
+        
+        const narasiY = parseInt(narasiYRangeInput.value);
+        narasiYValueElement.textContent = narasiY;
+        
+        // Konversi posisi Y (1400-1950) ke posisi relatif dalam preview (50%-90%)
+        const percentage = (narasiY - 1400) / 550; // 0-1
+        const topPosition = 50 + percentage * 40; // 50%-90%
+        narasiContainer.style.top = topPosition + '%';
+        
+        // Perbarui input hidden untuk form submission
+        const narasiYHiddenInput = document.querySelector('input[name="narasi_y"]');
+        if (narasiYHiddenInput) narasiYHiddenInput.value = narasiY;
+    }
+    
+    // Fungsi untuk memperbarui jarak antara judul dan narasi
+    function updateGapValue() {
+        if (!gapRangeInput || !gapValueElement) return;
+        
+        const gap = parseInt(gapRangeInput.value);
+        gapValueElement.textContent = gap;
+        
+        // Update posisi narasi berdasarkan jarak jika judul_y dan narasi_y belum diatur
+        // Hanya dilakukan jika slider posisi tidak aktif
+        if (!judulYRangeInput || !narasiYRangeInput || 
+            (!judulYRangeInput.getAttribute('data-active') && !narasiYRangeInput.getAttribute('data-active'))) {
+            if (judulContainer && narasiContainer) {
+                // Ambil posisi judul saat ini
+                const judulPosition = parseFloat(judulContainer.style.top) || 65;
+                
+                // Hitung jarak gap dalam persentase (gap 50-500px dikonversi ke 5%-30%)
+                const gapPercentage = 5 + ((gap - 50) / 450) * 25;
+                
+                // Posisi narasi = posisi judul + gap
+                narasiContainer.style.top = (judulPosition + gapPercentage) + '%';
+            }
+        }
+        
+        // Perbarui input hidden untuk form submission
+        const gapHiddenInput = document.querySelector('input[name="judul_narasi_gap"]');
+        if (gapHiddenInput) gapHiddenInput.value = gap;
     }
     
     // Inisialisasi tampilan awal
     updateImageTransform();
+    initializePositions();
+    updateGapValue();
     
     // Event listener untuk slider skala dan posisi
     scaleRangeInput.addEventListener('input', updateImageTransform);
     posXRangeInput.addEventListener('input', updateImageTransform);
     posYRangeInput.addEventListener('input', updateImageTransform);
+    
+    // Event listener untuk slider posisi Y judul dan narasi
+    if (judulYRangeInput) {
+        judulYRangeInput.addEventListener('input', updateJudulYPosition);
+    }
+    
+    if (narasiYRangeInput) {
+        narasiYRangeInput.addEventListener('input', updateNarasiYPosition);
+    }
+    
+    // Event listener untuk slider jarak
+    if (gapRangeInput) {
+        gapRangeInput.addEventListener('input', updateGapValue);
+    }
     
     // Tambahkan dukungan keyboard untuk kontrol nilai
     [scaleRangeInput, posXRangeInput, posYRangeInput].forEach(input => {
@@ -319,6 +445,99 @@ function initImageControls() {
             this.classList.remove('bg-indigo-300');
         }, 200);
     });
+    
+    // Event listener untuk tombol kontrol posisi Y judul
+    if (judulYUpButton && judulYRangeInput) {
+        judulYUpButton.addEventListener('click', function() {
+            const currentPos = parseInt(judulYRangeInput.value);
+            const newPos = Math.max(1000, currentPos - 10);
+            judulYRangeInput.value = newPos;
+            updateJudulYPosition();
+            
+            // Efek visual saat diklik
+            this.classList.add('bg-indigo-300');
+            setTimeout(() => {
+                this.classList.remove('bg-indigo-300');
+            }, 200);
+        });
+    }
+    
+    if (judulYDownButton && judulYRangeInput) {
+        judulYDownButton.addEventListener('click', function() {
+            const currentPos = parseInt(judulYRangeInput.value);
+            const newPos = Math.min(1800, currentPos + 10);
+            judulYRangeInput.value = newPos;
+            updateJudulYPosition();
+            
+            // Efek visual saat diklik
+            this.classList.add('bg-indigo-300');
+            setTimeout(() => {
+                this.classList.remove('bg-indigo-300');
+            }, 200);
+        });
+    }
+    
+    // Event listener untuk tombol kontrol posisi Y narasi
+    if (narasiYUpButton && narasiYRangeInput) {
+        narasiYUpButton.addEventListener('click', function() {
+            const currentPos = parseInt(narasiYRangeInput.value);
+            const newPos = Math.max(1400, currentPos - 10);
+            narasiYRangeInput.value = newPos;
+            updateNarasiYPosition();
+            
+            // Efek visual saat diklik
+            this.classList.add('bg-indigo-300');
+            setTimeout(() => {
+                this.classList.remove('bg-indigo-300');
+            }, 200);
+        });
+    }
+    
+    if (narasiYDownButton && narasiYRangeInput) {
+        narasiYDownButton.addEventListener('click', function() {
+            const currentPos = parseInt(narasiYRangeInput.value);
+            const newPos = Math.min(1950, currentPos + 10);
+            narasiYRangeInput.value = newPos;
+            updateNarasiYPosition();
+            
+            // Efek visual saat diklik
+            this.classList.add('bg-indigo-300');
+            setTimeout(() => {
+                this.classList.remove('bg-indigo-300');
+            }, 200);
+        });
+    }
+    
+    // Event listener untuk tombol kontrol jarak
+    if (gapDecreaseButton && gapRangeInput) {
+        gapDecreaseButton.addEventListener('click', function() {
+            const currentGap = parseInt(gapRangeInput.value);
+            const newGap = Math.max(50, currentGap - 5);
+            gapRangeInput.value = newGap;
+            updateGapValue();
+            
+            // Efek visual saat diklik
+            this.classList.add('bg-indigo-300');
+            setTimeout(() => {
+                this.classList.remove('bg-indigo-300');
+            }, 200);
+        });
+    }
+    
+    if (gapIncreaseButton && gapRangeInput) {
+        gapIncreaseButton.addEventListener('click', function() {
+            const currentGap = parseInt(gapRangeInput.value);
+            const newGap = Math.min(500, currentGap + 5);
+            gapRangeInput.value = newGap;
+            updateGapValue();
+            
+            // Efek visual saat diklik
+            this.classList.add('bg-indigo-300');
+            setTimeout(() => {
+                this.classList.remove('bg-indigo-300');
+            }, 200);
+        });
+    }
     
     // Reset posisi dan skala
     resetPositionButton.addEventListener('click', function() {

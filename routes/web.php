@@ -11,7 +11,7 @@ Route::get('/download/{id}', [PosterController::class, 'downloadPage'])->name('d
 Route::get('/download/image/{id}', [PosterController::class, 'downloadImage'])->name('download.image');
 
 // Regenerasi poster
-Route::post('/posters/{id}/regenerate', [PosterController::class, 'regenerate'])->name('posters.regenerate');
+Route::get('/posters/{id}/regenerate', [PosterController::class, 'regenerate'])->name('posters.regenerate');
 
 // Admin routes
 Route::get('/admin', [PosterController::class, 'index'])->name('admin');

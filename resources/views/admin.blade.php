@@ -158,6 +158,66 @@
                                     </div>
                                 </div>
                                 
+                                <!-- Pengaturan Jarak Teks -->
+                                <div class="mt-4">
+                                    <label for="judul_narasi_gap" class="block text-xs font-medium text-indigo-800 mb-1">Jarak Judul & Narasi: <span id="gap-value">300</span>px</label>
+                                    <div class="flex items-center gap-2">
+                                        <button type="button" id="gap-decrease" class="p-1.5 rounded-md bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all" title="Kurangi jarak">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                                            </svg>
+                                        </button>
+                                        <input type="range" id="judul_narasi_gap" name="judul_narasi_gap" min="50" max="500" step="5" value="300" 
+                                            class="flex-1 h-1.5 bg-indigo-200 rounded-lg appearance-none cursor-pointer">
+                                        <button type="button" id="gap-increase" class="p-1.5 rounded-md bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all" title="Tambah jarak">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Pengaturan Posisi Teks -->
+                                <div class="mt-3">
+                                    <label class="block text-xs font-medium text-indigo-800 mb-1">Posisi Teks</label>
+                                    
+                                    <div class="mb-2">
+                                        <label for="judul_y" class="block text-xs font-medium text-gray-600 mb-1">Posisi Judul (Y): <span id="judul-y-value">1600</span>px</label>
+                                        <div class="flex items-center gap-2">
+                                            <button type="button" id="judul-y-up" class="p-1.5 rounded-md bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all" title="Geser ke atas">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                                                </svg>
+                                            </button>
+                                            <input type="range" id="judul_y" name="judul_y" min="1000" max="1800" step="10" value="1600" 
+                                                class="flex-1 h-1.5 bg-indigo-200 rounded-lg appearance-none cursor-pointer">
+                                            <button type="button" id="judul-y-down" class="p-1.5 rounded-md bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all" title="Geser ke bawah">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <label for="narasi_y" class="block text-xs font-medium text-gray-600 mb-1">Posisi Narasi (Y): <span id="narasi-y-value">1900</span>px</label>
+                                        <div class="flex items-center gap-2">
+                                            <button type="button" id="narasi-y-up" class="p-1.5 rounded-md bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all" title="Geser ke atas">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                                                </svg>
+                                            </button>
+                                            <input type="range" id="narasi_y" name="narasi_y" min="1400" max="1950" step="10" value="1900" 
+                                                class="flex-1 h-1.5 bg-indigo-200 rounded-lg appearance-none cursor-pointer">
+                                            <button type="button" id="narasi-y-down" class="p-1.5 rounded-md bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all" title="Geser ke bawah">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
                                 <button type="button" id="reset-position" class="mt-2 text-xs font-medium text-indigo-700 hover:text-indigo-900 inline-flex items-center focus:outline-none">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -189,9 +249,13 @@
                         <div class="relative aspect-square rounded-xl overflow-hidden border-4 border-white shadow-lg">
                             <img id="preview-image" class="w-full h-full object-cover absolute inset-0 hidden" src="" alt="Preview Gambar">
                             <img id="preview-frame" class="absolute inset-0 w-full h-full object-contain z-10 hidden" src="" alt="Preview Frame">
-                            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 z-20">
-                                <h4 id="preview-judul" class="text-white text-xl font-bold mb-1 drop-shadow-lg text-center">Judul Poster</h4>
-                                <p id="preview-narasi" class="text-white text-sm drop-shadow-lg text-center">Narasi poster akan ditampilkan di sini</p>
+                            <div class="absolute inset-0 w-full h-full z-20">
+                                <div id="preview-judul-container" class="absolute w-full px-4" style="top: 65%;">
+                                    <h4 id="preview-judul" class="text-white text-xl font-bold drop-shadow-lg text-center">Judul Poster</h4>
+                                </div>
+                                <div id="preview-narasi-container" class="absolute w-full px-4" style="top: 75%;">
+                                    <p id="preview-narasi" class="text-white text-sm drop-shadow-lg text-center">Narasi poster akan ditampilkan di sini</p>
+                                </div>
                             </div>
                         </div>
                         <div class="flex justify-between items-center mt-3">

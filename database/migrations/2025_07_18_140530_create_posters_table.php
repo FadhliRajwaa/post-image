@@ -21,6 +21,9 @@ return new class extends Migration
             $table->float('scale_gambar')->default(1.0); // Skala gambar (default: 1.0)
             $table->integer('pos_x')->default(0); // Posisi X gambar (default: 0)
             $table->integer('pos_y')->default(0); // Posisi Y gambar (default: 0)
+            $table->integer('judul_narasi_gap')->default(300); // Jarak antara judul dan narasi (default: 300px)
+            $table->integer('judul_y')->default(1600); // Posisi Y judul dari atas (default: 1600px)
+            $table->integer('narasi_y')->default(1900); // Posisi Y narasi dari atas (default: 1900px)
             $table->timestamps();
         });
     }

@@ -181,8 +181,8 @@ class ImageProcessor
             $narasiX = (2000 - $narasiWidth) / 2;
             
             // Posisi Y untuk judul dan narasi
-            $judulY = 1600;  // Menyesuaikan dari 1600 ke 1700
-            $narasiY = 1850; // Menyesuaikan dari 1800 ke 1850
+            $judulY = $poster->judul_y ?? 1600;  // Posisi Y judul dari database atau default
+            $narasiY = $poster->narasi_y ?? 1900; // Posisi Y narasi dari database atau default
             
             // Coba gunakan font TTF
             $judulSuccess = false;
@@ -301,12 +301,12 @@ class ImageProcessor
             // Jika TTF gagal dengan kedua pendekatan, gunakan metode createLargeTextImage sebagai fallback terakhir
             if (!$judulSuccess) {
                 Log::warning('Menggunakan fallback untuk judul karena semua metode TTF gagal');
-                $this->createLargeTextImage($canvas, $judul, 1700, $white, $white, 'judul');
+                $this->createLargeTextImage($canvas, $judul, $poster->judul_y ?? 1600, $white, $white, 'judul');
             }
             
             if (!$narasiSuccess) {
                 Log::warning('Menggunakan fallback untuk narasi karena semua metode TTF gagal');
-                $this->createLargeTextImage($canvas, $narasi, 1800, $white, $white, 'narasi');
+                $this->createLargeTextImage($canvas, $narasi, $poster->narasi_y ?? 1900, $white, $white, 'narasi');
             }
             
             // Generate nama file

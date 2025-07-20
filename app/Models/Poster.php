@@ -18,5 +18,8 @@ class Poster extends Model
         'scale_gambar',
         'pos_x',
         'pos_y',
+        'judul_narasi_gap',
+        'judul_y',
+        'narasi_y',
     ];
 }

@@ -145,6 +145,71 @@
                                         </button>
                                     </div>
                                 </div>
+
+                                <!-- Pengaturan Jarak Teks -->
+                                <div class="mt-5 border-t border-gray-100 pt-5">
+                                    <label class="block text-sm font-medium text-gray-600 mb-2">Jarak Antar Teks</label>
+                                    
+                                    <div>
+                                        <label for="judul_narasi_gap" class="block text-xs text-gray-500 mb-1">Jarak Judul & Narasi: <span id="gap-value">{{ old('judul_narasi_gap', $poster->judul_narasi_gap ?? 300) }}</span>px</label>
+                                        <div class="flex items-center gap-2">
+                                            <button type="button" id="gap-decrease" class="p-1.5 rounded-md bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" title="Kurangi jarak">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                                                </svg>
+                                            </button>
+                                            <input type="range" id="judul_narasi_gap" name="judul_narasi_gap" min="50" max="500" step="5" value="{{ old('judul_narasi_gap', $poster->judul_narasi_gap ?? 300) }}" 
+                                                class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                            <button type="button" id="gap-increase" class="p-1.5 rounded-md bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" title="Tambah jarak">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <p class="mt-1 text-xs text-gray-400 italic">Mengatur jarak antara judul dan narasi pada poster</p>
+                                    </div>
+                                    
+                                    <div class="mt-4 pt-4 border-t border-gray-100">
+                                        <label class="block text-sm font-medium text-gray-600 mb-2">Posisi Teks</label>
+                                        
+                                        <div class="mb-3">
+                                            <label for="judul_y" class="block text-xs text-gray-500 mb-1">Posisi Judul (Y): <span id="judul-y-value">{{ old('judul_y', $poster->judul_y ?? 1600) }}</span>px</label>
+                                            <div class="flex items-center gap-2">
+                                                <button type="button" id="judul-y-up" class="p-1.5 rounded-md bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" title="Geser ke atas">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                                                    </svg>
+                                                </button>
+                                                <input type="range" id="judul_y_range" name="judul_y" min="1000" max="1800" step="10" value="{{ old('judul_y', $poster->judul_y ?? 1600) }}" 
+                                                    class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                                <button type="button" id="judul-y-down" class="p-1.5 rounded-md bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" title="Geser ke bawah">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                            <p class="mt-1 text-xs text-gray-400 italic">Mengatur posisi vertikal judul dari atas</p>
+                                        </div>
+                                        
+                                        <div>
+                                            <label for="narasi_y" class="block text-xs text-gray-500 mb-1">Posisi Narasi (Y): <span id="narasi-y-value">{{ old('narasi_y', $poster->narasi_y ?? 1900) }}</span>px</label>
+                                            <div class="flex items-center gap-2">
+                                                <button type="button" id="narasi-y-up" class="p-1.5 rounded-md bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" title="Geser ke atas">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                                                    </svg>
+                                                </button>
+                                                <input type="range" id="narasi_y_range" name="narasi_y" min="1400" max="1950" step="10" value="{{ old('narasi_y', $poster->narasi_y ?? 1900) }}" 
+                                                    class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                                <button type="button" id="narasi-y-down" class="p-1.5 rounded-md bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" title="Geser ke bawah">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                            <p class="mt-1 text-xs text-gray-400 italic">Mengatur posisi vertikal narasi dari atas</p>
+                                        </div>
+                                    </div>
                             </div>
                         </div>
                         
@@ -170,10 +235,14 @@
                                 class="absolute inset-0 w-full h-full object-cover" id="preview-frame">
                             
                             <!-- Teks overlay -->
-                            <div class="absolute bottom-0 left-0 right-0 p-4 z-20">
+                            <div class="absolute inset-0 w-full h-full">
                                 <!-- Menggunakan font Arial Black untuk judul dan Calibri Bold untuk narasi -->
-                                <h4 id="preview-judul" class="text-center text-white text-2xl mb-1 drop-shadow-lg" style="font-family: 'Arial Black', 'Arial Bold', sans-serif; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">{{ $poster->judul }}</h4>
-                                <p id="preview-narasi" class="text-center text-white text-base drop-shadow-lg" style="font-family: 'Calibri Bold', 'Calibri', sans-serif; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">{{ Str::limit($poster->narasi, 100) }}</p>
+                                <div id="preview-judul-container" class="absolute w-full px-4" style="top: 65%;">
+                                    <h4 id="preview-judul" class="text-center text-white text-2xl drop-shadow-lg" style="font-family: 'Arial Black', 'Arial Bold', sans-serif; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">{{ $poster->judul }}</h4>
+                                </div>
+                                <div id="preview-narasi-container" class="absolute w-full px-4" style="top: 75%;">
+                                    <p id="preview-narasi" class="text-center text-white text-base drop-shadow-lg" style="font-family: 'Calibri Bold', 'Calibri', sans-serif; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">{{ Str::limit($poster->narasi, 100) }}</p>
+                                </div>
                             </div>
                         </div>
                         <p class="text-xs text-gray-500 mt-2 text-center">Preview akan diperbarui secara otomatis saat Anda mengedit.</p>
@@ -199,6 +268,10 @@
             const currentGambar = document.getElementById('current-gambar');
             const currentFrame = document.getElementById('current-frame');
             
+            // Elemen preview containers
+            const judulContainer = document.getElementById('preview-judul-container');
+            const narasiContainer = document.getElementById('preview-narasi-container');
+            
             // Elemen pengaturan gambar
             const scaleRangeInput = document.getElementById('scale_gambar_range');
             const scaleValueElement = document.getElementById('scale-value');
@@ -214,6 +287,41 @@
             const posYUpButton = document.getElementById('pos-y-up');
             const posYDownButton = document.getElementById('pos-y-down');
             const resetPositionButton = document.getElementById('reset-position');
+            
+            // Elemen kontrol posisi Y judul dan narasi
+            const judulYRangeInput = document.getElementById('judul_y_range');
+            const narasiYRangeInput = document.getElementById('narasi_y_range');
+            const judulYValueElement = document.getElementById('judul-y-value');
+            const narasiYValueElement = document.getElementById('narasi-y-value');
+            const judulYUpButton = document.getElementById('judul-y-up');
+            const judulYDownButton = document.getElementById('judul-y-down');
+            const narasiYUpButton = document.getElementById('narasi-y-up');
+            const narasiYDownButton = document.getElementById('narasi-y-down');
+            
+            // Elemen jarak judul & narasi
+            const gapRangeInput = document.getElementById('judul_narasi_gap');
+            const gapValueElement = document.getElementById('gap-value');
+            const gapDecreaseButton = document.getElementById('gap-decrease');
+            const gapIncreaseButton = document.getElementById('gap-increase');
+            
+            // Fungsi untuk menginisialisasi posisi awal
+            function initializePositions() {
+                // Inisialisasi posisi Y judul
+                if (judulContainer) {
+                    const judulY = judulYRangeInput ? parseInt(judulYRangeInput.value) : 1600;
+                    const percentage = (judulY - 1000) / 800; // 0-1
+                    const topPosition = 40 + percentage * 40; // 40%-80%
+                    judulContainer.style.top = topPosition + '%';
+                }
+                
+                // Inisialisasi posisi Y narasi
+                if (narasiContainer) {
+                    const narasiY = narasiYRangeInput ? parseInt(narasiYRangeInput.value) : 1900;
+                    const percentage = (narasiY - 1400) / 550; // 0-1
+                    const topPosition = 50 + percentage * 40; // 50%-90%
+                    narasiContainer.style.top = topPosition + '%';
+                }
+            }
             
             // Update judul saat input berubah
             judulInput.addEventListener('input', function() {
@@ -270,7 +378,8 @@
             
             // Inisialisasi tampilan awal
             updateImageTransform();
-            
+            initializePositions();
+
             // Event listener untuk slider skala
             scaleRangeInput.addEventListener('input', updateImageTransform);
             
@@ -329,6 +438,182 @@
                 posYRangeInput.value = 0;
                 updateImageTransform();
             });
+
+            // Fungsi untuk memperbarui tampilan posisi Y judul
+            function updateJudulYPosition() {
+                if (!judulYRangeInput || !judulYValueElement) return;
+                
+                const judulY = parseInt(judulYRangeInput.value);
+                judulYValueElement.textContent = judulY;
+                
+                // Perbarui preview jika ada
+                const judulContainer = document.getElementById('preview-judul-container');
+                if (judulContainer) {
+                    // Konversi posisi Y (1000-1800) ke posisi relatif dalam preview (40%-80%)
+                    const percentage = (judulY - 1000) / 800; // 0-1
+                    const topPosition = 40 + percentage * 40; // 40%-80%
+                    judulContainer.style.top = topPosition + '%';
+                }
+            }
+            
+            // Fungsi untuk memperbarui tampilan posisi Y narasi
+            function updateNarasiYPosition() {
+                if (!narasiYRangeInput || !narasiYValueElement) return;
+                
+                const narasiY = parseInt(narasiYRangeInput.value);
+                narasiYValueElement.textContent = narasiY;
+                
+                // Perbarui preview jika ada
+                const narasiContainer = document.getElementById('preview-narasi-container');
+                if (narasiContainer) {
+                    // Konversi posisi Y (1400-1950) ke posisi relatif dalam preview (50%-90%)
+                    const percentage = (narasiY - 1400) / 550; // 0-1
+                    const topPosition = 50 + percentage * 40; // 50%-90%
+                    narasiContainer.style.top = topPosition + '%';
+                }
+            }
+            
+            // Fungsi untuk memperbarui jarak antara judul dan narasi
+            function updateGapValue() {
+                if (!gapRangeInput || !gapValueElement) return;
+                
+                const gap = parseInt(gapRangeInput.value);
+                gapValueElement.textContent = gap;
+                
+                // Update posisi narasi berdasarkan jarak jika judul_y dan narasi_y belum diatur
+                // Hanya dilakukan jika slider posisi tidak aktif
+                if (!judulYRangeInput.getAttribute('data-active') && !narasiYRangeInput.getAttribute('data-active')) {
+                    const judulContainer = document.getElementById('preview-judul-container');
+                    const narasiContainer = document.getElementById('preview-narasi-container');
+                    
+                    if (judulContainer && narasiContainer) {
+                        // Ambil posisi judul saat ini
+                        const judulPosition = parseFloat(judulContainer.style.top) || 65;
+                        
+                        // Hitung jarak gap dalam persentase (gap 50-500px dikonversi ke 5%-30%)
+                        const gapPercentage = 5 + ((gap - 50) / 450) * 25;
+                        
+                        // Posisi narasi = posisi judul + gap
+                        narasiContainer.style.top = (judulPosition + gapPercentage) + '%';
+                    }
+                }
+            }
+            
+            // Inisialisasi tampilan awal
+            if (judulYRangeInput) {
+                updateJudulYPosition();
+                
+                // Event listener untuk slider judul Y
+                judulYRangeInput.addEventListener('input', updateJudulYPosition);
+                
+                // Event listener untuk tombol kontrol judul Y
+                if (judulYUpButton) {
+                    judulYUpButton.addEventListener('click', function() {
+                        const currentPos = parseInt(judulYRangeInput.value);
+                        const newPos = Math.max(1000, currentPos - 10);
+                        judulYRangeInput.value = newPos;
+                        updateJudulYPosition();
+                        
+                        // Efek visual saat diklik
+                        this.classList.add('bg-indigo-300');
+                        setTimeout(() => {
+                            this.classList.remove('bg-indigo-300');
+                        }, 200);
+                    });
+                }
+                
+                if (judulYDownButton) {
+                    judulYDownButton.addEventListener('click', function() {
+                        const currentPos = parseInt(judulYRangeInput.value);
+                        const newPos = Math.min(1800, currentPos + 10);
+                        judulYRangeInput.value = newPos;
+                        updateJudulYPosition();
+                        
+                        // Efek visual saat diklik
+                        this.classList.add('bg-indigo-300');
+                        setTimeout(() => {
+                            this.classList.remove('bg-indigo-300');
+                        }, 200);
+                    });
+                }
+            }
+            
+            // Inisialisasi tampilan awal narasi
+            if (narasiYRangeInput) {
+                updateNarasiYPosition();
+                
+                // Event listener untuk slider narasi Y
+                narasiYRangeInput.addEventListener('input', updateNarasiYPosition);
+                
+                // Event listener untuk tombol kontrol narasi Y
+                if (narasiYUpButton) {
+                    narasiYUpButton.addEventListener('click', function() {
+                        const currentPos = parseInt(narasiYRangeInput.value);
+                        const newPos = Math.max(1400, currentPos - 10);
+                        narasiYRangeInput.value = newPos;
+                        updateNarasiYPosition();
+                        
+                        // Efek visual saat diklik
+                        this.classList.add('bg-indigo-300');
+                        setTimeout(() => {
+                            this.classList.remove('bg-indigo-300');
+                        }, 200);
+                    });
+                }
+                
+                if (narasiYDownButton) {
+                    narasiYDownButton.addEventListener('click', function() {
+                        const currentPos = parseInt(narasiYRangeInput.value);
+                        const newPos = Math.min(1950, currentPos + 10);
+                        narasiYRangeInput.value = newPos;
+                        updateNarasiYPosition();
+                        
+                        // Efek visual saat diklik
+                        this.classList.add('bg-indigo-300');
+                        setTimeout(() => {
+                            this.classList.remove('bg-indigo-300');
+                        }, 200);
+                    });
+                }
+            }
+
+            // Event listener untuk slider gap
+            if (gapRangeInput) {
+                gapRangeInput.addEventListener('input', function() {
+                    updateGapValue();
+                });
+                
+                // Event listener untuk tombol kontrol gap
+                if (gapDecreaseButton) {
+                    gapDecreaseButton.addEventListener('click', function() {
+                        const currentGap = parseInt(gapRangeInput.value);
+                        const newGap = Math.max(50, currentGap - 5);
+                        gapRangeInput.value = newGap;
+                        updateGapValue();
+                        
+                        // Efek visual saat diklik
+                        this.classList.add('bg-indigo-300');
+                        setTimeout(() => {
+                            this.classList.remove('bg-indigo-300');
+                        }, 200);
+                    });
+                }
+                
+                if (gapIncreaseButton) {
+                    gapIncreaseButton.addEventListener('click', function() {
+                        const currentGap = parseInt(gapRangeInput.value);
+                        const newGap = Math.min(500, currentGap + 5);
+                        gapRangeInput.value = newGap;
+                        updateGapValue();
+                        
+                        // Efek visual saat diklik
+                        this.classList.add('bg-indigo-300');
+                        setTimeout(() => {
+                            this.classList.remove('bg-indigo-300');
+                        }, 200);
+                    });
+                }
+            }
         });
     </script>
 @endsection 

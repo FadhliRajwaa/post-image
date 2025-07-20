@@ -230,8 +230,8 @@ class PosterController extends Controller
             $narasiX = (2000 - $narasiWidth) / 2;
             
             // Posisi Y untuk judul dan narasi
-            $judulY = 1700;  // Menyesuaikan dari 1600 ke 1700
-            $narasiY = 1850; // Menyesuaikan dari 1800 ke 1850
+            $judulY = 1700;  // Posisi Y judul tetap
+            $narasiY = 1700 + ($poster->judul_narasi_gap ?? 180); // Gunakan nilai gap dari database
             
             // Coba gunakan font TTF
             $judulSuccess = false;
@@ -338,7 +338,7 @@ class PosterController extends Controller
             
             if (!$narasiSuccess) {
                 Log::warning('Menggunakan fallback untuk narasi karena semua metode TTF gagal');
-                $this->createLargeTextImage($image, $narasi, 1800, $textColor, $textColor, 'narasi');
+                $this->createLargeTextImage($image, $narasi, 1700 + ($poster->judul_narasi_gap ?? 180), $textColor, $textColor, 'narasi');
             }
             
             // Simpan gambar
@@ -638,8 +638,8 @@ class PosterController extends Controller
             $narasiX = (2000 - $narasiWidth) / 2;
             
             // Posisi Y untuk judul dan narasi
-            $judulY = 1700;  // Menyesuaikan dari 1600 ke 1700
-            $narasiY = 1850; // Menyesuaikan dari 1800 ke 1850
+            $judulY = 1700;  // Posisi Y judul tetap
+            $narasiY = 1700 + ($poster->judul_narasi_gap ?? 180); // Gunakan nilai gap dari database
             
             // Coba gunakan font TTF
             $judulSuccess = false;
@@ -662,7 +662,7 @@ class PosterController extends Controller
                     // Gunakan wordWrapText untuk membagi teks menjadi baris-baris
                     $lines = $this->wordWrapText($narasi, $fontSizeNarasi, $calibriBoldPath);
                     
-                    $lineHeight = $fontSizeNarasi * 1.1; // Mengurangi tinggi baris dari 1.2x menjadi 1.1x
+                    $lineHeight = $fontSizeNarasi * 1.05; // Tinggi baris yang seimbang, tidak terlalu rapat dan tidak terlalu renggang
                     $startY = $narasiY - (count($lines) - 1) * $lineHeight; // Mulai dari atas agar tetap berakhir di posisi $narasiY
                     
                     $narasiSuccess = true;
@@ -702,7 +702,7 @@ class PosterController extends Controller
             
             if (!$narasiSuccess) {
                 Log::warning('Menggunakan fallback untuk narasi download karena TTF gagal');
-                $this->createLargeTextImage($canvas, $narasi, 1800, $white, $white, 'narasi');
+                $this->createLargeTextImage($canvas, $narasi, 1700 + ($poster->judul_narasi_gap ?? 180), $white, $white, 'narasi');
             }
             
             // Pastikan direktori ada
@@ -799,7 +799,7 @@ class PosterController extends Controller
             
             // Tambahkan teks narasi
             $narasi = substr($poster->narasi, 0, 1000) . (strlen($poster->narasi) > 1000 ? '...' : '');
-            $this->addTextWithShadow($canvas, $narasi, 1000, 1800, $white, null, 5);
+            $this->addTextWithShadow($canvas, $narasi, 1000, 1700 + ($poster->judul_narasi_gap ?? 180), $white, null, 5);
             
             // Generate nama file
             $filename = 'posters/' . time() . '_download_default_' . uniqid() . '.jpg';
@@ -854,6 +854,9 @@ class PosterController extends Controller
             'scale_gambar' => 'nullable|numeric|between:0.1,2.0',
             'pos_x' => 'nullable|integer',
             'pos_y' => 'nullable|integer',
+            'judul_narasi_gap' => 'nullable|integer|min:50|max:500',
+            'judul_y' => 'nullable|integer|min:1000|max:1800',
+            'narasi_y' => 'nullable|integer|min:1400|max:1950',
         ]);
         
         try {
@@ -870,6 +873,9 @@ class PosterController extends Controller
                 'scale_gambar' => $request->input('scale_gambar', 1.0),
                 'pos_x' => $request->input('pos_x', 0),
                 'pos_y' => $request->input('pos_y', 0),
+                'judul_narasi_gap' => $request->input('judul_narasi_gap', 300),
+                'judul_y' => $request->input('judul_y', 1600),
+                'narasi_y' => $request->input('narasi_y', 1900),
             ]);
             
             // Proses gambar menggunakan ImageProcessor untuk ukuran font yang besar
@@ -922,6 +928,9 @@ class PosterController extends Controller
             'scale_gambar' => 'nullable|numeric|between:0.1,2.0',
             'pos_x' => 'nullable|integer',
             'pos_y' => 'nullable|integer',
+            'judul_narasi_gap' => 'nullable|integer|min:50|max:500',
+            'judul_y' => 'nullable|integer|min:1000|max:1800',
+            'narasi_y' => 'nullable|integer|min:1400|max:1950',
         ]);
 
         $poster = Poster::findOrFail($id);
@@ -930,6 +939,9 @@ class PosterController extends Controller
         $poster->scale_gambar = $request->input('scale_gambar', $poster->scale_gambar);
         $poster->pos_x = $request->input('pos_x', $poster->pos_x);
         $poster->pos_y = $request->input('pos_y', $poster->pos_y);
+        $poster->judul_narasi_gap = $request->input('judul_narasi_gap', $poster->judul_narasi_gap ?? 300);
+        $poster->judul_y = $request->input('judul_y', $poster->judul_y ?? 1600);
+        $poster->narasi_y = $request->input('narasi_y', $poster->narasi_y ?? 1900);
         
         if ($request->hasFile('gambar')) {
             // Hapus file lama jika ada
@@ -1044,18 +1056,24 @@ class PosterController extends Controller
             if ($poster->hasil_final) {
                 Storage::disk('public')->delete($poster->hasil_final);
                 $poster->hasil_final = null;
-                $poster->save();
             }
             
-            // Gunakan ImageProcessor untuk regenerasi dengan ukuran font besar
+            // Pastikan nilai parameter skala dan posisi tersimpan sebelum regenerasi
+            Log::info('Regenerasi poster ID: ' . $poster->id . ' dengan skala: ' . 
+                    $poster->scale_gambar . ', posX: ' . $poster->pos_x . ', posY: ' . $poster->pos_y);
+            
+            // Gunakan ImageProcessor untuk regenerasi dengan semua parameter
             if (!$this->imageProcessor->processPoster($poster)) {
                 return redirect()->back()->with('error', 'Gagal meregenerasi gambar poster.');
             }
             
+            // Simpan perubahan ke database
+            $poster->save();
+            
             return redirect()->back()->with('success', 'Poster berhasil diregenerasi.');
         } catch (\Exception $e) {
             Log::error('Error saat regenerasi poster: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat meregenerasi poster.');
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat meregenerasi poster: ' . $e->getMessage());
         }
     }
 
