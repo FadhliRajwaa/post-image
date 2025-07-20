@@ -144,8 +144,54 @@ class PosterController extends Controller
                 return false;
             }
             
-            // Resize gambar utama ke 2000x2000 dan tempatkan di canvas
-            imagecopyresampled($image, $mainImage, 0, 0, 0, 0, 2000, 2000, imagesx($mainImage), imagesy($mainImage));
+            // Gunakan gambar asli, sesuaikan ukuran untuk mengisi penuh canvas (tidak menggunakan scale)
+            $orig_width = imagesx($mainImage);
+            $orig_height = imagesy($mainImage);
+            
+            // Hitung rasio aspek untuk mempertahankan proporsionalitas
+            $ratio_orig = $orig_width / $orig_height;
+            
+            // Target width dan height minimal 2000x2000 (memenuhi canvas)
+            $target_width = 2000;
+            $target_height = 2000;
+            
+            // Hitung dimensi agar gambar minimal memenuhi canvas
+            if ($target_width / $target_height > $ratio_orig) {
+                // Jika target lebih lebar, atur width dan sesuaikan height
+                $new_width = $target_width;
+                $new_height = $target_width / $ratio_orig;
+            } else {
+                // Jika target lebih tinggi, atur height dan sesuaikan width
+                $new_height = $target_height;
+                $new_width = $target_height * $ratio_orig;
+            }
+            
+            // Sekarang terapkan skala dan posisi dari pengaturan user
+            $scale = $poster->scale_gambar ?? 1.0;
+            $new_width *= $scale;
+            $new_height *= $scale;
+            
+            // Posisi gambar (dari tengah canvas)
+            $posX = ($poster->pos_x ?? 0);
+            $posY = ($poster->pos_y ?? 0);
+            
+            // Posisi x,y dari tengah canvas
+            $centerX = (2000 - $new_width) / 2 + $posX;
+            $centerY = (2000 - $new_height) / 2 + $posY;
+            
+            // Pastikan dimensi dan posisi valid
+            if ($new_width <= 0) $new_width = 1;
+            if ($new_height <= 0) $new_height = 1;
+            
+            // Resize dan posisikan gambar
+            imagecopyresampled(
+                $image,
+                $mainImage, 
+                $centerX, $centerY, 
+                0, 0, 
+                $new_width, $new_height, 
+                $orig_width, $orig_height
+            );
             
             // Tempatkan frame di atas gambar utama
             imagecopyresampled($image, $frameImage, 0, 0, 0, 0, 2000, 2000, imagesx($frameImage), imagesy($frameImage));
@@ -454,8 +500,7 @@ class PosterController extends Controller
             
             Log::info('Akan menyimpan file download ke: ' . $fullPath);
             
-            // Buat canvas
-            $canvas = imagecreatetruecolor(2000, 2000);
+            // Canvas akan dibuat saat proses resize gambar
             
             // Load gambar utama
             $extension = pathinfo($gambarPath, PATHINFO_EXTENSION);
@@ -472,17 +517,58 @@ class PosterController extends Controller
                 return false;
             }
             
-            // Resize gambar utama ke 2000x2000
-            $width = imagesx($mainImage);
-            $height = imagesy($mainImage);
+            // Buat canvas dengan background transparan
+            $canvas = imagecreatetruecolor(2000, 2000);
             
-            $resizedMain = imagecreatetruecolor(2000, 2000);
-            imagecopyresampled($resizedMain, $mainImage, 0, 0, 0, 0, 2000, 2000, $width, $height);
+            // Gunakan gambar asli, sesuaikan ukuran untuk mengisi penuh canvas
+            $orig_width = imagesx($mainImage);
+            $orig_height = imagesy($mainImage);
+            
+            // Hitung rasio aspek untuk mempertahankan proporsionalitas
+            $ratio_orig = $orig_width / $orig_height;
+            
+            // Target width dan height minimal 2000x2000 (memenuhi canvas)
+            $target_width = 2000;
+            $target_height = 2000;
+            
+            // Hitung dimensi agar gambar minimal memenuhi canvas
+            if ($target_width / $target_height > $ratio_orig) {
+                // Jika target lebih lebar, atur width dan sesuaikan height
+                $new_width = $target_width;
+                $new_height = $target_width / $ratio_orig;
+            } else {
+                // Jika target lebih tinggi, atur height dan sesuaikan width
+                $new_height = $target_height;
+                $new_width = $target_height * $ratio_orig;
+            }
+            
+            // Sekarang terapkan skala dan posisi dari pengaturan user
+            $scale = $poster->scale_gambar ?? 1.0;
+            $new_width *= $scale;
+            $new_height *= $scale;
+            
+            // Posisi gambar (dari tengah canvas)
+            $posX = ($poster->pos_x ?? 0);
+            $posY = ($poster->pos_y ?? 0);
+            
+            // Posisi x,y dari tengah canvas
+            $centerX = (2000 - $new_width) / 2 + $posX;
+            $centerY = (2000 - $new_height) / 2 + $posY;
+            
+            // Pastikan dimensi dan posisi valid
+            if ($new_width <= 0) $new_width = 1;
+            if ($new_height <= 0) $new_height = 1;
+            
+            // Resize dan posisikan gambar langsung ke canvas
+            imagecopyresampled(
+                $canvas,
+                $mainImage, 
+                $centerX, $centerY, 
+                0, 0, 
+                $new_width, $new_height, 
+                $orig_width, $orig_height
+            );
             imagedestroy($mainImage);
-            
-            // Copy gambar utama ke canvas
-            imagecopy($canvas, $resizedMain, 0, 0, 0, 0, 2000, 2000);
-            imagedestroy($resizedMain);
             
             // Load frame overlay
             $frame = imagecreatefrompng($framePath);
@@ -765,6 +851,9 @@ class PosterController extends Controller
             'narasi' => 'required|max:2000',
             'gambar' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'frame' => 'required|image|mimes:png|max:2048',
+            'scale_gambar' => 'nullable|numeric|between:0.1,2.0',
+            'pos_x' => 'nullable|integer',
+            'pos_y' => 'nullable|integer',
         ]);
         
         try {
@@ -778,6 +867,9 @@ class PosterController extends Controller
                 'narasi' => $validated['narasi'],
                 'gambar' => $gambarPath,
                 'frame' => $framePath,
+                'scale_gambar' => $request->input('scale_gambar', 1.0),
+                'pos_x' => $request->input('pos_x', 0),
+                'pos_y' => $request->input('pos_y', 0),
             ]);
             
             // Proses gambar menggunakan ImageProcessor untuk ukuran font yang besar
@@ -827,11 +919,17 @@ class PosterController extends Controller
             'narasi' => 'required|max:2000',
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'frame' => 'nullable|image|mimes:png|max:2048',
+            'scale_gambar' => 'nullable|numeric|between:0.1,2.0',
+            'pos_x' => 'nullable|integer',
+            'pos_y' => 'nullable|integer',
         ]);
 
         $poster = Poster::findOrFail($id);
         $poster->judul = $request->judul;
         $poster->narasi = $request->narasi;
+        $poster->scale_gambar = $request->input('scale_gambar', $poster->scale_gambar);
+        $poster->pos_x = $request->input('pos_x', $poster->pos_x);
+        $poster->pos_y = $request->input('pos_y', $poster->pos_y);
         
         if ($request->hasFile('gambar')) {
             // Hapus file lama jika ada

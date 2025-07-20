@@ -15,5 +15,8 @@ class Poster extends Model
         'gambar',
         'frame',
         'hasil_final',
+        'scale_gambar',
+        'pos_x',
+        'pos_y',
     ];
 }

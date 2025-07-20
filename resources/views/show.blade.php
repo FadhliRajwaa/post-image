@@ -21,7 +21,7 @@
                         @else
                             <div class="w-full h-full relative">
                                 <!-- Gambar utama sebagai background -->
-                                <img src="{{ asset('storage/' . $poster->gambar) }}" alt="{{ $poster->judul }}" class="w-full h-full object-cover absolute inset-0">
+                                <img src="{{ asset('storage/' . $poster->gambar) }}" alt="{{ $poster->judul }}" class="w-full h-full object-cover absolute inset-0" style="transform: translate({{ $poster->pos_x }}px, {{ $poster->pos_y }}px) scale({{ $poster->scale_gambar }}); transform-origin: center;">
                                 
                                 <!-- Frame sebagai overlay -->
                                 <img src="{{ asset('storage/' . $poster->frame) }}" alt="Frame" class="w-full h-full object-contain absolute inset-0 z-10">
@@ -94,6 +94,25 @@
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Dibuat pada:</span>
                                 <span class="text-gray-900 font-medium">{{ $poster->created_at->format('d M Y, H:i') }}</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Informasi Penyesuaian Gambar -->
+                        <div class="border-t border-gray-200 mt-3 pt-3">
+                            <h4 class="text-sm font-medium text-gray-500 mb-2">Penyesuaian Gambar</h4>
+                            <div class="grid grid-cols-3 gap-3 text-xs">
+                                <div class="bg-indigo-50 rounded-md p-2 text-center">
+                                    <span class="block text-gray-500 mb-1">Skala</span>
+                                    <span class="font-semibold text-indigo-700">{{ number_format($poster->scale_gambar, 2) }}x</span>
+                                </div>
+                                <div class="bg-indigo-50 rounded-md p-2 text-center">
+                                    <span class="block text-gray-500 mb-1">Posisi X</span>
+                                    <span class="font-semibold text-indigo-700">{{ $poster->pos_x }}px</span>
+                                </div>
+                                <div class="bg-indigo-50 rounded-md p-2 text-center">
+                                    <span class="block text-gray-500 mb-1">Posisi Y</span>
+                                    <span class="font-semibold text-indigo-700">{{ $poster->pos_y }}px</span>
+                                </div>
                             </div>
                         </div>
                     </div>

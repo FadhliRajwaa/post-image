@@ -18,6 +18,9 @@ return new class extends Migration
             $table->string('gambar');
             $table->string('frame');
             $table->string('hasil_final')->nullable();
+            $table->float('scale_gambar')->default(1.0); // Skala gambar (default: 1.0)
+            $table->integer('pos_x')->default(0); // Posisi X gambar (default: 0)
+            $table->integer('pos_y')->default(0); // Posisi Y gambar (default: 0)
             $table->timestamps();
         });
     }

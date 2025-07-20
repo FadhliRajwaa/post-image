@@ -68,6 +68,85 @@
                                 @enderror
                             </div>
                         </div>
+
+                        <!-- Pengaturan Gambar -->
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 shadow-sm">
+                            <h3 class="font-medium text-gray-700 mb-3 flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                </svg>
+                                Sesuaikan Gambar
+                            </h3>
+                            <div class="space-y-4">
+                                <!-- Kontrol Skala -->
+                                <div>
+                                    <label for="scale_gambar" class="block text-sm font-medium text-gray-600 mb-1">Skala Gambar: <span id="scale-value">{{ old('scale_gambar', $poster->scale_gambar ?? 1.0) }}</span>x</label>
+                                    <div class="flex items-center gap-2">
+                                        <button type="button" id="scale-down" class="p-1.5 rounded-md bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                                            </svg>
+                                        </button>
+                                        <input type="range" id="scale_gambar_range" name="scale_gambar" min="0.1" max="2" step="0.05" value="{{ old('scale_gambar', $poster->scale_gambar ?? 1.0) }}" 
+                                            class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                        <button type="button" id="scale-up" class="p-1.5 rounded-md bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Posisi Gambar -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-600 mb-1">Posisi Gambar</label>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label for="pos_x" class="block text-sm font-medium text-gray-600 mb-1">Geser Horizontal: <span id="pos-x-value">{{ old('pos_x', $poster->pos_x ?? 0) }}</span>px</label>
+                                            <div class="flex items-center gap-2">
+                                                <button type="button" id="pos-x-left" class="p-1.5 rounded-md bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" title="Geser ke kiri">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                                    </svg>
+                                                </button>
+                                                <input type="range" id="pos_x_range" name="pos_x" min="-500" max="500" step="10" value="{{ old('pos_x', $poster->pos_x ?? 0) }}" 
+                                                    class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                                <button type="button" id="pos-x-right" class="p-1.5 rounded-md bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" title="Geser ke kanan">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label for="pos_y" class="block text-sm font-medium text-gray-600 mb-1">Geser Vertikal: <span id="pos-y-value">{{ old('pos_y', $poster->pos_y ?? 0) }}</span>px</label>
+                                            <div class="flex items-center gap-2">
+                                                <button type="button" id="pos-y-up" class="p-1.5 rounded-md bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" title="Geser ke atas">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                                                    </svg>
+                                                </button>
+                                                <input type="range" id="pos_y_range" name="pos_y" min="-500" max="500" step="10" value="{{ old('pos_y', $poster->pos_y ?? 0) }}" 
+                                                    class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                                <button type="button" id="pos-y-down" class="p-1.5 rounded-md bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" title="Geser ke bawah">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 text-center">
+                                        <button type="button" id="reset-position" class="text-xs font-medium text-indigo-600 hover:text-indigo-800 inline-flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                            </svg>
+                                            Reset ke Posisi Default
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         
                         <div class="flex justify-end">
                             <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
@@ -120,6 +199,22 @@
             const currentGambar = document.getElementById('current-gambar');
             const currentFrame = document.getElementById('current-frame');
             
+            // Elemen pengaturan gambar
+            const scaleRangeInput = document.getElementById('scale_gambar_range');
+            const scaleValueElement = document.getElementById('scale-value');
+            const scaleDownButton = document.getElementById('scale-down');
+            const scaleUpButton = document.getElementById('scale-up');
+            
+            const posXRangeInput = document.getElementById('pos_x_range');
+            const posYRangeInput = document.getElementById('pos_y_range');
+            const posXValueElement = document.getElementById('pos-x-value');
+            const posYValueElement = document.getElementById('pos-y-value');
+            const posXLeftButton = document.getElementById('pos-x-left');
+            const posXRightButton = document.getElementById('pos-x-right');
+            const posYUpButton = document.getElementById('pos-y-up');
+            const posYDownButton = document.getElementById('pos-y-down');
+            const resetPositionButton = document.getElementById('reset-position');
+            
             // Update judul saat input berubah
             judulInput.addEventListener('input', function() {
                 previewJudul.textContent = this.value || '{{ $poster->judul }}';
@@ -156,6 +251,83 @@
                     };
                     reader.readAsDataURL(this.files[0]);
                 }
+            });
+            
+            // Fungsi untuk memperbarui tampilan skala dan posisi gambar
+            function updateImageTransform() {
+                const scale = parseFloat(scaleRangeInput.value);
+                const posX = parseInt(posXRangeInput.value);
+                const posY = parseInt(posYRangeInput.value);
+                
+                previewImage.style.transform = `translate(${posX}px, ${posY}px) scale(${scale})`;
+                previewImage.style.transformOrigin = 'center';
+                
+                // Update nilai yang ditampilkan
+                scaleValueElement.textContent = scale.toFixed(2);
+                posXValueElement.textContent = posX;
+                posYValueElement.textContent = posY;
+            }
+            
+            // Inisialisasi tampilan awal
+            updateImageTransform();
+            
+            // Event listener untuk slider skala
+            scaleRangeInput.addEventListener('input', updateImageTransform);
+            
+            // Event listener untuk slider posisi
+            posXRangeInput.addEventListener('input', updateImageTransform);
+            posYRangeInput.addEventListener('input', updateImageTransform);
+            
+            // Event listener untuk tombol kontrol skala
+            scaleDownButton.addEventListener('click', function() {
+                const currentScale = parseFloat(scaleRangeInput.value);
+                const newScale = Math.max(0.1, currentScale - 0.05);
+                scaleRangeInput.value = newScale;
+                updateImageTransform();
+            });
+            
+            scaleUpButton.addEventListener('click', function() {
+                const currentScale = parseFloat(scaleRangeInput.value);
+                const newScale = Math.min(2, currentScale + 0.05);
+                scaleRangeInput.value = newScale;
+                updateImageTransform();
+            });
+            
+            // Event listener untuk tombol kontrol posisi
+            posXLeftButton.addEventListener('click', function() {
+                const currentPos = parseInt(posXRangeInput.value);
+                const newPos = Math.max(-500, currentPos - 10);
+                posXRangeInput.value = newPos;
+                updateImageTransform();
+            });
+            
+            posXRightButton.addEventListener('click', function() {
+                const currentPos = parseInt(posXRangeInput.value);
+                const newPos = Math.min(500, currentPos + 10);
+                posXRangeInput.value = newPos;
+                updateImageTransform();
+            });
+            
+            posYUpButton.addEventListener('click', function() {
+                const currentPos = parseInt(posYRangeInput.value);
+                const newPos = Math.max(-500, currentPos - 10);
+                posYRangeInput.value = newPos;
+                updateImageTransform();
+            });
+            
+            posYDownButton.addEventListener('click', function() {
+                const currentPos = parseInt(posYRangeInput.value);
+                const newPos = Math.min(500, currentPos + 10);
+                posYRangeInput.value = newPos;
+                updateImageTransform();
+            });
+            
+            // Reset posisi dan skala
+            resetPositionButton.addEventListener('click', function() {
+                scaleRangeInput.value = 1.0;
+                posXRangeInput.value = 0;
+                posYRangeInput.value = 0;
+                updateImageTransform();
             });
         });
     </script>

@@ -6,6 +6,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     initCopyNarasi();
     initDownloadButtons();
+    initImageControls();
 });
 
 /**
@@ -111,5 +112,219 @@ function initDownloadButtons() {
                 }, 1500);
             }, 1500);
         });
+    });
+}
+
+/**
+ * Inisialisasi kontrol gambar (skala dan posisi) untuk admin page
+ */
+function initImageControls() {
+    // Cek apakah elemen kontrol gambar ada (halaman admin atau edit)
+    const previewContainer = document.getElementById('preview-container');
+    const previewImage = document.getElementById('preview-image');
+    const scaleRangeInput = document.getElementById('scale_gambar_range');
+    
+    if (!previewContainer || !previewImage || !scaleRangeInput) {
+        return; // Keluar jika tidak di halaman yang memiliki kontrol gambar
+    }
+    
+    // Tampilkan preview container
+    previewContainer.classList.remove('hidden');
+    
+    // Elemen-elemen pengaturan gambar
+    const scaleValueElement = document.getElementById('scale-value');
+    const scaleDownButton = document.getElementById('scale-down');
+    const scaleUpButton = document.getElementById('scale-up');
+    
+    const posXRangeInput = document.getElementById('pos_x_range');
+    const posYRangeInput = document.getElementById('pos_y_range');
+    const posXValueElement = document.getElementById('pos-x-value');
+    const posYValueElement = document.getElementById('pos-y-value');
+    const posXLeftButton = document.getElementById('pos-x-left');
+    const posXRightButton = document.getElementById('pos-x-right');
+    const posYUpButton = document.getElementById('pos-y-up');
+    const posYDownButton = document.getElementById('pos-y-down');
+    const resetPositionButton = document.getElementById('reset-position');
+    
+    // Juga perbarui saat gambar atau frame berubah
+    const gambarInput = document.getElementById('gambar');
+    const frameInput = document.getElementById('frame');
+    const previewFrame = document.getElementById('preview-frame');
+    
+    if (gambarInput) {
+        gambarInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    if (previewImage) {
+                        previewImage.src = e.target.result;
+                        previewImage.classList.remove('hidden');
+                    }
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    }
+    
+    if (frameInput && previewFrame) {
+        frameInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewFrame.src = e.target.result;
+                    previewFrame.classList.remove('hidden');
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    }
+    
+    // Juga perbarui judul dan narasi di preview
+    const judulInput = document.getElementById('judul');
+    const narasiInput = document.getElementById('narasi');
+    const previewJudul = document.getElementById('preview-judul');
+    const previewNarasi = document.getElementById('preview-narasi');
+    
+    if (judulInput && previewJudul) {
+        judulInput.addEventListener('input', function() {
+            previewJudul.textContent = this.value || 'Judul Poster';
+        });
+    }
+    
+    if (narasiInput && previewNarasi) {
+        narasiInput.addEventListener('input', function() {
+            let text = this.value || 'Narasi poster akan ditampilkan di sini';
+            if (text.length > 100) {
+                text = text.substring(0, 100) + '...';
+            }
+            previewNarasi.textContent = text;
+        });
+    }
+    
+    // Fungsi untuk memperbarui tampilan skala dan posisi gambar
+    function updateImageTransform() {
+        const scale = parseFloat(scaleRangeInput.value);
+        const posX = parseInt(posXRangeInput.value);
+        const posY = parseInt(posYRangeInput.value);
+        
+        // Transformasi gambar dengan CSS
+        previewImage.style.transform = `translate(${posX}px, ${posY}px) scale(${scale})`;
+        previewImage.style.transformOrigin = 'center';
+        
+        // Update nilai yang ditampilkan
+        scaleValueElement.textContent = scale.toFixed(2);
+        posXValueElement.textContent = posX;
+        posYValueElement.textContent = posY;
+    }
+    
+    // Inisialisasi tampilan awal
+    updateImageTransform();
+    
+    // Event listener untuk slider skala dan posisi
+    scaleRangeInput.addEventListener('input', updateImageTransform);
+    posXRangeInput.addEventListener('input', updateImageTransform);
+    posYRangeInput.addEventListener('input', updateImageTransform);
+    
+    // Tambahkan dukungan keyboard untuk kontrol nilai
+    [scaleRangeInput, posXRangeInput, posYRangeInput].forEach(input => {
+        input.addEventListener('keydown', function(e) {
+            let step = 0;
+            if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+                step = parseFloat(this.step || 1);
+                this.value = Math.min(parseFloat(this.max), parseFloat(this.value) + step);
+                e.preventDefault();
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+                step = parseFloat(this.step || 1);
+                this.value = Math.max(parseFloat(this.min), parseFloat(this.value) - step);
+                e.preventDefault();
+            }
+            if (step !== 0) {
+                // Trigger change event
+                updateImageTransform();
+            }
+        });
+    });
+    
+    // Event listener untuk tombol kontrol skala
+    scaleDownButton.addEventListener('click', function() {
+        const currentScale = parseFloat(scaleRangeInput.value);
+        const newScale = Math.max(0.1, currentScale - 0.05).toFixed(2);
+        scaleRangeInput.value = newScale;
+        updateImageTransform();
+        
+        // Efek visual saat diklik
+        this.classList.add('bg-indigo-300');
+        setTimeout(() => {
+            this.classList.remove('bg-indigo-300');
+        }, 200);
+    });
+    
+    scaleUpButton.addEventListener('click', function() {
+        const currentScale = parseFloat(scaleRangeInput.value);
+        const newScale = Math.min(2, currentScale + 0.05).toFixed(2);
+        scaleRangeInput.value = newScale;
+        updateImageTransform();
+    });
+    
+    // Event listener untuk tombol kontrol posisi horizontal
+    posXLeftButton.addEventListener('click', function() {
+        const currentPos = parseInt(posXRangeInput.value);
+        const newPos = Math.max(-500, currentPos - 10);
+        posXRangeInput.value = newPos;
+        updateImageTransform();
+        
+        // Efek visual saat diklik
+        this.classList.add('bg-indigo-300');
+        setTimeout(() => {
+            this.classList.remove('bg-indigo-300');
+        }, 200);
+    });
+    
+    posXRightButton.addEventListener('click', function() {
+        const currentPos = parseInt(posXRangeInput.value);
+        const newPos = Math.min(500, currentPos + 10);
+        posXRangeInput.value = newPos;
+        updateImageTransform();
+        
+        // Efek visual saat diklik
+        this.classList.add('bg-indigo-300');
+        setTimeout(() => {
+            this.classList.remove('bg-indigo-300');
+        }, 200);
+    });
+    
+    // Event listener untuk tombol kontrol posisi vertikal
+    posYUpButton.addEventListener('click', function() {
+        const currentPos = parseInt(posYRangeInput.value);
+        const newPos = Math.max(-500, currentPos - 10);
+        posYRangeInput.value = newPos;
+        updateImageTransform();
+        
+        // Efek visual saat diklik
+        this.classList.add('bg-indigo-300');
+        setTimeout(() => {
+            this.classList.remove('bg-indigo-300');
+        }, 200);
+    });
+    
+    posYDownButton.addEventListener('click', function() {
+        const currentPos = parseInt(posYRangeInput.value);
+        const newPos = Math.min(500, currentPos + 10);
+        posYRangeInput.value = newPos;
+        updateImageTransform();
+        
+        // Efek visual saat diklik
+        this.classList.add('bg-indigo-300');
+        setTimeout(() => {
+            this.classList.remove('bg-indigo-300');
+        }, 200);
+    });
+    
+    // Reset posisi dan skala
+    resetPositionButton.addEventListener('click', function() {
+        scaleRangeInput.value = 1.0;
+        posXRangeInput.value = 0;
+        posYRangeInput.value = 0;
+        updateImageTransform();
     });
 } 

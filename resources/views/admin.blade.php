@@ -91,6 +91,80 @@
                                     <p class="text-red-500 text-xs mt-1.5">{{ $message }}</p>
                                 @enderror
                             </div>
+
+                            <!-- Pengaturan Gambar -->
+                            <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-100 shadow-sm">
+                                <h4 class="text-sm font-medium text-indigo-700 mb-3 flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                    </svg>
+                                    Sesuaikan Gambar
+                                </h4>
+                                
+                                <!-- Kontrol Skala -->
+                                <div class="mb-3">
+                                    <label for="scale_gambar" class="block text-xs font-medium text-indigo-800 mb-1">Skala Gambar: <span id="scale-value">1.00</span>x</label>
+                                    <div class="flex items-center gap-2">
+                                        <button type="button" id="scale-down" class="p-1 rounded-md bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                                            </svg>
+                                        </button>
+                                        <input type="range" id="scale_gambar_range" name="scale_gambar" min="0.1" max="2" step="0.05" value="1" 
+                                            class="flex-1 h-1.5 bg-indigo-200 rounded-lg appearance-none cursor-pointer">
+                                        <button type="button" id="scale-up" class="p-1 rounded-md bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Posisi Gambar -->
+                                <div class="grid grid-cols-1 gap-3">
+                                    <div>
+                                        <label for="pos_x" class="block text-xs font-medium text-indigo-800 mb-1">Geser Horizontal: <span id="pos-x-value">0</span>px</label>
+                                        <div class="flex items-center gap-2">
+                                            <button type="button" id="pos-x-left" class="p-1.5 rounded-md bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all" title="Geser ke kiri">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                                </svg>
+                                            </button>
+                                            <input type="range" id="pos_x_range" name="pos_x" min="-500" max="500" step="10" value="0" 
+                                                class="flex-1 h-1.5 bg-indigo-200 rounded-lg appearance-none cursor-pointer">
+                                            <button type="button" id="pos-x-right" class="p-1.5 rounded-md bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all" title="Geser ke kanan">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label for="pos_y" class="block text-xs font-medium text-indigo-800 mb-1">Geser Vertikal: <span id="pos-y-value">0</span>px</label>
+                                        <div class="flex items-center gap-2">
+                                            <button type="button" id="pos-y-up" class="p-1.5 rounded-md bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all" title="Geser ke atas">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                                                </svg>
+                                            </button>
+                                            <input type="range" id="pos_y_range" name="pos_y" min="-500" max="500" step="10" value="0" 
+                                                class="flex-1 h-1.5 bg-indigo-200 rounded-lg appearance-none cursor-pointer">
+                                            <button type="button" id="pos-y-down" class="p-1.5 rounded-md bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all" title="Geser ke bawah">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button type="button" id="reset-position" class="mt-2 text-xs font-medium text-indigo-700 hover:text-indigo-900 inline-flex items-center focus:outline-none">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                    </svg>
+                                    Reset Posisi
+                                </button>
+                            </div>
                             
                             <div>
                                 <button type="submit" class="w-full flex justify-center items-center py-3 px-4 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-150">
